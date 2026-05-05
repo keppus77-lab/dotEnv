@@ -44,11 +44,11 @@ loadEnv(__DIR__ . /.env);
 ### Dateistruktur
 
 mein-projekt/
-├── .env                 (NICHT committen!)
-├── .env.example         (Template committen)
-├── env-loader.php
-├── config.php
-└── index.php
+├── .env                 (NICHT committen!)<br>
+├── .env.example         (Template committen)<br>
+├── env-loader.php<br>
+├── config.php<br>
+└── index.php<br>
 
 ### config.php
 
