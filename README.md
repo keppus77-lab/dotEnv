@@ -12,9 +12,9 @@ Lädt Konfigurationswerte aus einer .env Datei und macht sie verfügbar über:
 ```
 ## Schnellstart
 
-### 1. env-loader.php erstellen
+### 1. loadEnv.php erstellen
 
-Kopiere den Code in eine neue Datei env-loader.php
+Kopiere den Code in eine neue Datei loadEnv.php
 
 ### 2. .env Datei erstellen
 
