@@ -5,10 +5,11 @@ Eine einfache PHP-Funktion zum Laden von Umgebungsvariablen aus .env Dateien - O
 ## Was macht dieser Code?
 
 Lädt Konfigurationswerte aus einer .env Datei und macht sie verfügbar über:
-- \$_ENV[KEY]
-- \$_SERVER[KEY]  
+```php
+- $_ENV[KEY]
+- $_SERVER[KEY]  
 - getenv(KEY)
-
+```
 ## Schnellstart
 
 ### 1. env-loader.php erstellen
@@ -18,27 +19,28 @@ Kopiere den Code in eine neue Datei env-loader.php
 ### 2. .env Datei erstellen
 
 Datei: .env
-<br>
-DB_HOST=localhost<br>
-DB_PORT=3306<br>
-DB_NAME=meine_datenbank<br>
-DB_USER=root<br>
-DB_PASSWORD=geheimes_passwort<br>
+```yaml
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=meine_datenbank
+DB_USER=root
+DB_PASSWORD=geheimes_passwort
 
 API_KEY=abc123xyz789
 
-APP_ENV=production<br>
-APP_DEBUG=false<br>
+APP_ENV=production
+APP_DEBUG=false
+```
 
 ### 3. Verwenden in index.php
-
+```php
 require_once loadEnv.php;
 
 loadEnv(__DIR__ . /.env);
 
-\$dbHost = \$_ENV[DB_HOST];<br>
-\$apiKey = getenv(API_KEY);
-
+$dbHost = \$_ENV[DB_HOST];
+$apiKey = getenv(API_KEY);
+```
 ## Vollständiges Beispiel
 
 ### Dateistruktur
@@ -51,37 +53,38 @@ mein-projekt/
 └── index.php<br>
 
 ### config.php
+```php
+require_once loadEnvr.php;
+loadEnv(__DIR__ . /.env);
 
-require_once loadEnvr.php;<br>
-loadEnv(__DIR__ . /.env);<br>
-
-define(DB_HOST, \$_ENV[DB_HOST]);<br>
-define(DB_NAME, \$_ENV[DB_NAME]);<br>
-define(DB_USER, \$_ENV[DB_USER]);<br>
-define(DB_PASSWORD, \$_ENV[DB_PASSWORD]);<br>
+define(DB_HOST, $_ENV[DB_HOST]);
+define(DB_NAME, $_ENV[DB_NAME]);
+define(DB_USER, $_ENV[DB_USER]);
+define(DB_PASSWORD, $_ENV[DB_PASSWORD]);
 
 function getDbConnection() {
-    \$dsn = mysql:host= . DB_HOST . ;dbname= . DB_NAME;<br>
-    \$pdo = new PDO(\$dsn, DB_USER, DB_PASSWORD);<br>
-    return \$pdo;<br>
+    $dsn = mysql:host= . DB_HOST . ;dbname= . DB_NAME;
+    $pdo = new PDO($dsn, DB_USER, DB_PASSWORD);
+    return $pdo;
 }
-
+```
 ### index.php
-
+```php
 require_once config.php;<br>
-\$db = getDbConnection();<br>
-
+$db = getDbConnection();<br>
+```
 ## Sicherheit - WICHTIG!
 
 ### .gitignore erstellen
-
-.env<br>
-.env.local<br>
-vendor/<br>
-
+```yaml
+.env
+.env.local
+vendor/
+```
 ### Warum .env NICHT committen?
-
-FALSCH: git add .env<br>
+```yaml
+FALSCH: git add .env
+```
 -> Passwörter landen in Git History!<br>
 
 RICHTIG: git add .env.example<br>
@@ -96,42 +99,43 @@ RICHTIG: git add .env.example<br>
 ## Erweiterte Features
 
 ### Helper-Funktion
-
-function env(\$key, \$default = null) {<br>
-    \$value = \$_ENV[\$key] ?? \$_SERVER[\$key] ?? getenv(\$key);<br>
-    return \$value !== false ? \$value : \$default;<br>
-}<br>
+```php
+function env($key, $default = null) {
+    $value = $_ENV[$key] ?? $_SERVER[$key] ?? getenv($key);
+    return $value !== false ? $value : $default;
+}
 
 // Verwendung:
-\$dbHost = env(DB_HOST, localhost);<br>
-\$debug = env(APP_DEBUG, false);<br>
-
+$dbHost = env(DB_HOST, localhost);
+$debug = env(APP_DEBUG, false);
+```
 ### Validierung
+```php
+function validateEnv($required = []) {
+    $missing = [];
+    foreach ($required as $key) {
+        if (!isset($_ENV[$key]) || $_ENV[$key] === ) {
+            $missing[] = $key;
+        }
+    }
+    if (!empty($missing)) {
+        throw new Exception(Missing: . implode(, , $missing));
+    }
+}
 
-function validateEnv(\$required = []) {<br>
-    \$missing = [];<br>
-    foreach (\$required as \$key) {<br>
-        if (!isset(\$_ENV[\$key]) || \$_ENV[\$key] === ) {<br>
-            \$missing[] = \$key;<br>
-        }<br>
-    }<br>
-    if (!empty(\$missing)) {<br>
-        throw new Exception(Missing: . implode(, , \$missing));<br>
-    }<br>
-}<br>
 
-loadEnv(__DIR__ . /.env);<br>
-validateEnv([DB_HOST, DB_NAME, DB_USER, DB_PASSWORD]);<br>
-
+loadEnv(__DIR__ . /.env);
+validateEnv([DB_HOST, DB_NAME, DB_USER, DB_PASSWORD]);
+```
 ## Troubleshooting
 
 ### Problem: Undefined index DB_HOST
 
 Lösung: .env ERST laden, DANN verwenden
-
-loadEnv(__DIR__ . /.env);<br>
-\$host = \$_ENV[DB_HOST];<br>
-
+```php
+loadEnv(__DIR__ . /.env);
+$host = $_ENV[DB_HOST];
+```
 ### Problem: Parse error
 
 Nutze Anführungszeichen bei Werten mit Leerzeichen:
@@ -142,9 +146,9 @@ Richtig: APP_NAME="Mein Shop"<br>
 ### Problem: .env file not found
 
 Nutze absoluten Pfad:<br>
-
-loadEnv(__DIR__ . /.env);<br>
-
+```php
+loadEnv(__DIR__ . /.env);
+```
 ## vs. Composer Package
 
 ### Deine Funktion (Lightweight)
@@ -176,18 +180,19 @@ Nachteile:<br>
 ## Web-Zugriff verhindern
 
 ### Nginx
-
-location ~ /\.env {<br>
-    deny all;<br>
-}<br>
+```php
+location ~ /\.env {
+    deny all;
+}
+```
 
 ### Apache (.htaccess)
-
+```php
 <Files .env><br>
     Order allow,deny<br>
     Deny from all<br>
 </Files><br>
-
+```
 ## Best Practices
 
 - .env ist in .gitignore<br>
